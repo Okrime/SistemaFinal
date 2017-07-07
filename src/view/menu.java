@@ -285,8 +285,6 @@ public class menu extends Shell {
 	public static boolean checarValor(float valor){
 		boolean valid = false;
 	
-		System.out.println(valor);
-		System.out.println(saldo);
 		if (saldo>valor)
 			valid = true;
 		
