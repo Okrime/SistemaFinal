@@ -1,10 +1,20 @@
 package view;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+
+import javax.swing.JOptionPane;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
+
+import com.mysql.jdbc.Statement;
+
+import conexao.connect;
+
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -53,31 +63,50 @@ public class janelaAlterarLogin extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean valid = false;
-				int tipoLogin = 1;	//* BD * puxar do banco de dados
-				int tipoPessoa = 2; //* BD * puxar do banco de dados
-				int id=0;
 				String user = text.getText();
-				//id = menu.findIdByUser(user);	//validar se login existe
+				valid = menu.checarUser(user);	//validar se login existe
 				setVisible(false);
-				if (id != 0){	//se retornar 0 é porque nao achou login
-					//* BD * pegar tipo de login
-					janelaGerenteAltFuncionario jgaf = new janelaGerenteAltFuncionario(display);
-					switch(tipoLogin){
-					case 1: if (tipoPessoa == 1){	//se for 1 eh pessoa fisica
-								janelaFuncionarioAltClienteFis jfacf = new janelaFuncionarioAltClienteFis(display);
-								jfacf.setVisible(true);
-							} else {				//se for 2 eh pessoa juridica
-								janelaFuncionarioAltClienteJur jfacj = new janelaFuncionarioAltClienteJur(display);
-								jfacj.setVisible(true);
-							}
-						break;
-					case 2:	jgaf.setVisible(true);
-						break;
-					case 3: jgaf.setVisible(true);
-						break;
+				if (valid){	//se retornar true eh pq achou login
+					try
+					{
+						Connection ExConn = connect.getConnection();
+						Statement stmt = (Statement) ExConn.createStatement();
+						String sqlBusca = "SELECT * FROM new_schema.login WHERE loginnome = '" + user + "';";
+						ResultSet rs = stmt.executeQuery(sqlBusca);
+						rs.next();
+						int loggedAux;	//tipo de login
+						loggedAux = rs.getInt(4);
+						int loggedIdAux;//id do login
+						loggedIdAux = rs.getInt(1);
+						int tipoPessoa = 1;
+						if (loggedAux == 1){
+							sqlBusca = "SELECT * FROM new_schema.cliente WHERE clientenome = '" + user + "';";
+							rs = stmt.executeQuery(sqlBusca);
+							rs.next();
+							tipoPessoa = rs.getInt(6);
+						}
+						System.out.println(tipoPessoa);
+						switch(loggedAux){
+						case 1: if (tipoPessoa == 1){	//se for 1 eh pessoa fisica
+									janelaFuncionarioAltClienteFis jfacf = new janelaFuncionarioAltClienteFis(display);
+									jfacf.setVisible(true);
+								} else {				//se for 2 eh pessoa juridica
+									janelaFuncionarioAltClienteJur jfacj = new janelaFuncionarioAltClienteJur(display);
+									jfacj.setVisible(true);
+								}
+							break;
+						case 2:	janelaGerenteAltFuncionario jgaf = new janelaGerenteAltFuncionario(display);
+							jgaf.setVisible(true);
+							break;
+						case 3: janelaGerenteAltFuncionario jgaf2 = new janelaGerenteAltFuncionario(display);
+							jgaf2.setVisible(true);
+							break;
+						}
 					}
-					/*operacaoSucesso oS = new operacaoSucesso(display);
-					oS.setVisible(true);*/
+					catch (Exception j)
+					{
+						System.out.println("Erro.");
+					}
 				}else {
 					operacaoFalha oF = new operacaoFalha(display);
 					oF.setVisible(true);
