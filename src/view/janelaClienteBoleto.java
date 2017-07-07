@@ -17,6 +17,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import view.menu;
 
 public class janelaClienteBoleto extends Shell {
+	public static float saldo;
 	private Text text;
 	private Text text_1;
 	private Text text_2;
@@ -83,32 +84,28 @@ public class janelaClienteBoleto extends Shell {
 		
 		Label label_value = new Label(this, SWT.NONE);
 		label_value.setBounds(124, 142, 41, 15);
-		
+		menu.idLogado = 1;
+		String aux;
+		try{
+			Connection Conn = connect.getConnection();
+			Statement stmt = (Statement) Conn.createStatement();
+			String sqlBusca = "SELECT * FROM new_schema.cliente WHERE clienteid = " + menu.idLogado + ";";
+			//Test later
+			ResultSet rs = stmt.executeQuery(sqlBusca);
+			rs.next();
+			
+			saldo = rs.getFloat(5);
+			System.out.println(saldo);
+		}catch(Exception j){
+			System.out.println("Erro.");
+		}
+		aux = String.valueOf(saldo);
+		label_value.setText(aux);
 		Button btnConfirmar = new Button(this, SWT.NONE);
 		btnConfirmar.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String codigo, aux;
-				float saldo=0;
-				menu.idLogado = 1;
-				try{
-					Connection Conn = connect.getConnection();
-					Statement stmt = (Statement) Conn.createStatement();
-					String sqlBusca = "SELECT * FROM new_schema.cliente WHERE clienteid = " + menu.idLogado + ";";
-					
-					//Test later
-					ResultSet rs = stmt.executeQuery(sqlBusca);
-					rs.next();
-					
-					saldo = rs.getFloat(5);
-					
-				}catch(Exception j){
-					System.out.println("Erro.");
-				}
-				System.out.println(saldo);
-				aux = String.valueOf(saldo);
-				System.out.println(aux);
-				label_value.setText(aux);	//*BD*
 				float valor;
 				aux = text_2.getText();
 				valor = Float.parseFloat(aux);
