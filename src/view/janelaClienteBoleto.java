@@ -17,7 +17,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import view.menu;
 
 public class janelaClienteBoleto extends Shell {
-	public static float saldo;
+
 	private Text text;
 	private Text text_1;
 	private Text text_2;
@@ -94,12 +94,12 @@ public class janelaClienteBoleto extends Shell {
 			ResultSet rs = stmt.executeQuery(sqlBusca);
 			rs.next();
 			
-			saldo = rs.getFloat(5);
-			System.out.println(saldo);
+			menu.saldo = rs.getFloat(5);
+			
 		}catch(Exception j){
 			System.out.println("Erro.");
 		}
-		aux = String.valueOf(saldo);
+		aux = String.valueOf(menu.saldo);
 		label_value.setText(aux);
 		Button btnConfirmar = new Button(this, SWT.NONE);
 		btnConfirmar.addSelectionListener(new SelectionAdapter() {
@@ -125,7 +125,7 @@ public class janelaClienteBoleto extends Shell {
 				if (valid){
 					valid = checarData(dia, mes, ano);	//validar data
 					if (valid)
-						valid = menu.checarValor(saldo, valor);	//validar saldo
+						valid = menu.checarValor(menu.saldo, valor);	//validar saldo
 				}
 				setVisible(false);
 				/* confirmar senha
@@ -133,7 +133,18 @@ public class janelaClienteBoleto extends Shell {
 				C.setVisible(true);
 				*/
 				if (valid){
-					saldo = saldo - valor;	//* BD * atualizar saldo no BD
+					//
+					try{
+						Connection Conn = connect.getConnection();
+						Statement stmt = (Statement) Conn.createStatement();
+						menu.saldo = menu.saldo - valor;	//* BD * atualizar saldo no BD
+						String sqlUpdate = "UPDATE new_schema.cliente SET saldo = '" + menu.saldo + "' WHERE	clienteid = " + menu.idLogado + ";";
+						stmt.executeUpdate(sqlUpdate);
+					}catch(Exception j){
+						System.out.println("Erro.");
+					}
+					
+					
 					operacaoSucesso oS = new operacaoSucesso(display);
 					oS.setVisible(true);
 				}else {

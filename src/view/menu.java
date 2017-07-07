@@ -1,5 +1,8 @@
 package view;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -8,6 +11,11 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
+
+import com.mysql.jdbc.Statement;
+
+import conexao.connect;
+
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import view.*;
@@ -17,6 +25,7 @@ public class menu extends Shell {
 	public static int loggedType;		//declarar variavel global para usar nas outras classes
 											//indica tipo de login, 0 neutro 1 cliente 2 funcionario e 3 gerente
 	public static int idLogado;
+	public static float saldo;
 	/**
 	 * Launch the application.
 	 * @param args
@@ -46,8 +55,18 @@ public class menu extends Shell {
 		
 		Menu menu = new Menu(this, SWT.BAR);
 		setMenuBar(menu);
-		float saldo = 9.99f;	//* BD * puxar saldo
 		String aux = null;
+		try{
+			Connection Conn = connect.getConnection();
+			Statement stmt = (Statement) Conn.createStatement();
+			String sqlBusca = "SELECT * FROM new_schema.cliente WHERE clienteid = " + idLogado + ";";
+			ResultSet rs = stmt.executeQuery(sqlBusca);
+			rs.next();
+			
+			saldo = rs.getFloat(5);
+		}catch(Exception j){
+			System.out.println("Erro.");
+		}
 		
 		/*/**** LOGIN ****
 		MenuItem mntmLogin = new MenuItem(menu, SWT.CASCADE);
@@ -278,20 +297,48 @@ public class menu extends Shell {
 		return value;
 	}
 	
-	public static boolean checarConta(String conta){
+	public static boolean checarConta(int conta){
 		boolean value = false;
-		String bdConta = "conta";	//* BD * puxar conta do BD
+		int bdConta=0;
 		
-		if (bdConta.equals(conta))
+		try{
+			Connection Conn = connect.getConnection();
+			Statement stmt = (Statement) Conn.createStatement();
+			String sqlBusca = "SELECT * FROM new_schema.cliente WHERE clienteid = " + menu.idLogado + ";";
+			//Test later
+			ResultSet rs = stmt.executeQuery(sqlBusca);
+			rs.next();
+			
+			bdConta = rs.getInt(8);
+			
+		}catch(Exception j){
+			System.out.println("Erro.");
+		}
+		
+		if (bdConta == conta)
 			value = true;
 		return value;
 	}
 	
-	public static boolean checarAgencia(String agencia){
+	public static boolean checarAgencia(int agencia){
 		boolean value = false;
-		String bdAgencia = "agencia";	//* BD * puxar agencia do BD
+		int bdAgencia = 0;
 		
-		if (bdAgencia.equals(agencia))
+		try{
+			Connection Conn = connect.getConnection();
+			Statement stmt = (Statement) Conn.createStatement();
+			String sqlBusca = "SELECT * FROM new_schema.cliente WHERE clienteid = " + menu.idLogado + ";";
+			//Test later
+			ResultSet rs = stmt.executeQuery(sqlBusca);
+			rs.next();
+			
+			bdAgencia = rs.getInt(7);
+			
+		}catch(Exception j){
+			System.out.println("Erro.");
+		}
+		
+		if (bdAgencia == agencia)
 			value = true;
 		return value;
 	}

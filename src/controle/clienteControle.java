@@ -102,7 +102,7 @@ public class clienteControle
 				Connection ExConn = connect.getConnection();
 				Statement stmt = (Statement) ExConn.createStatement();
 				
-				String sqlUpdate = "update cliente set" + "CLIENTENOME = '" + nome+ "', "
+				String sqlUpdate = "UPDATE cliente set" + "CLIENTENOME = '" + nome+ "', "
 						+ "EMAIL = '" + email + "',"
 						+ "TELEFONE = '" + telefone + "'"
 						+ "" + "where clienteid ="

@@ -88,6 +88,7 @@ public class janelaClienteTransacao extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean valid = false;
+				int a, c;
 				float saldo = 9.99f;	//* BD * puxar valor do saldo do banco
 				float valor;
 				String agencia = text_1.getText();
@@ -97,9 +98,11 @@ public class janelaClienteTransacao extends Shell {
 				valor = Float.parseFloat(aux);
 				System.out.println(valor);
 				//agencia = getAgencia(id);
-				valid = menu.checarAgencia(agencia);	//checar agencia
+				a = Integer.parseInt(agencia);
+				c = Integer.parseInt(conta);
+				valid = menu.checarAgencia(a);	//checar agencia
 				if (valid){
-					valid = menu.checarConta(conta);	//checar conta
+					valid = menu.checarConta(c);	//checar conta
 					if (valid)
 						valid = menu.checarValor(saldo, valor);	//validar saldo
 				}
