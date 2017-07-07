@@ -79,7 +79,7 @@ public class login extends Shell {
 				setVisible(false);
 				if (id != 0){
 					menu.idLogado = id;
-					menu Menu = new menu(display, id);
+					menu Menu = new menu(display);
 					Menu.setVisible(true);
 				}else {
 					//print mensagem de erro
@@ -113,28 +113,28 @@ public class login extends Shell {
 	
 	public int checarLogin(String username, String password) {
 		//String bdUsername = "a", bdPassword = "a";	//*BD*
-		
+		boolean value = false;
 		try{
 			Connection Conn = connect.getConnection();
 			Statement stmt = (Statement) Conn.createStatement();
 			String sqlBusca = "SELECT * FROM new_schema.login WHERE loginnome = '" + username + "';";
-			
 			//Test later
 			ResultSet rs = stmt.executeQuery(sqlBusca);
 			rs.next();
 			
-			int id = rs.getInt(1);
+			int id;
+			id = rs.getInt(1);
 			String bdPassword = rs.getString(3);
 			String bdUsername = rs.getString(2);
 		
 			if(bdUsername.equals(username) && bdPassword.equals(password)){
 				menu.loggedType = rs.getInt(4);
 	            return id;
-	        
-			}else return 0;
+			}else
+				return 0;
 			
 		}catch(Exception e){
-			System.out.println("Erro.");
+			System.out.println("Erro de Login.");
 			return 0;
 		}
 	}

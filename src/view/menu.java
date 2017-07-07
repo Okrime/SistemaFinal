@@ -34,7 +34,7 @@ public class menu extends Shell {
 	public static void main(String args[]) {
 		try {
 			Display display = Display.getDefault();
-			menu shell = new menu(display, 0);
+			menu shell = new menu(display);
 			shell.open();
 			shell.layout();
 			while (!shell.isDisposed()) {
@@ -51,7 +51,7 @@ public class menu extends Shell {
 	 * Create the shell.
 	 * @param display
 	 */
-	public menu(Display display, int id) {
+	public menu(Display display) {
 		super(display, SWT.SHELL_TRIM);
 		
 		Menu menu = new Menu(this, SWT.BAR);
@@ -60,11 +60,18 @@ public class menu extends Shell {
 		try{
 			Connection Conn = connect.getConnection();
 			Statement stmt = (Statement) Conn.createStatement();
-			String sqlBusca = "SELECT * FROM new_schema.cliente WHERE clienteid = " + idLogado + ";";
+			String sqlBusca = "SELECT * FROM new_schema.login WHERE loginid = " + idLogado + ";";
 			ResultSet rs = stmt.executeQuery(sqlBusca);
 			rs.next();
 			
-			saldo = rs.getFloat(5);
+			if (loggedType == 1){
+				Statement stmt2 = (Statement) Conn.createStatement();
+				String sqlBusca2 = "SELECT * FROM new_schema.cliente WHERE clienteid = " + idLogado + ";";
+				ResultSet rs2 = stmt2.executeQuery(sqlBusca2);
+				rs2.next();
+				
+				saldo = rs2.getFloat(5);
+			}
 		}catch(Exception j){
 			System.out.println("Erro.");
 		}
@@ -367,28 +374,30 @@ public class menu extends Shell {
 	
 	public static boolean checarUser(String user){
 		boolean value = false;
-		String bdUser = "user";	//* BD * puxar user do BD
+		String bdUser;
+		
+		try{
+			Connection Conn = connect.getConnection();
+			Statement stmt = (Statement) Conn.createStatement();
+			String sqlBusca = "SELECT * FROM new_schema.login WHERE loginnome = '" + user + "';";
+			
+			//Test later
+			ResultSet rs = stmt.executeQuery(sqlBusca);
+			rs.next();
+			
+			idAlvo = rs.getInt(1);
+			bdUser = rs.getString(2);
+		
+			if(bdUser.equals(user)){
+				value = true;
+			}
+			
+		}catch(Exception e){
+			System.out.println("Erro.");
+		}
 		
 		//vai precisar percorrer todos os users no BD pra ver se tem algum que ja existe
-		if (bdUser.equals(user))
-			value = true;
 		return value;
-	}
-	
-	public static int findIdByUser(String user){
-		boolean value = false;
-		int id = 0;
-		String bdUser = "user";	//* BD * vasculhar todos os usuarios
-		
-		if (bdUser.equals(user)){
-			value = true;
-		}
-		
-		if (value){
-			//* BD * puxar id de acordo com o usuario encontrado
-			id = 1;
-		}
-		return id;	//se retornar 0 eh pq nao achou
 	}
 	
 	@Override

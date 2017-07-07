@@ -1,5 +1,10 @@
 package view;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+
+import javax.swing.JOptionPane;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -8,6 +13,11 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import com.mysql.jdbc.Statement;
+
+import conexao.connect;
+
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
@@ -61,6 +71,31 @@ public class janelaGerenteExcluir extends Shell {
 				setVisible(false);
 				if (valid){	//se retornar true é porque achou login
 					//* BD * excluir dados no banco
+					try
+					{
+						Connection ExConn = connect.getConnection();
+						Statement stmt = (Statement) ExConn.createStatement();
+						String sqlDelete;
+						String sqlBusca = "SELECT * FROM new_schema.login WHERE loginnome = '" + user + "';";
+						ResultSet rs = stmt.executeQuery(sqlBusca);
+						rs.next();
+						int loggedAux;
+						loggedAux = rs.getInt(4);
+						if (loggedAux == 1){
+							sqlDelete = "DELETE FROM new_schema.cliente WHERE clienteid = " + menu.idAlvo + ";";
+						}else {
+							sqlDelete = "DELETE FROM new_schema.funcionario WHERE funcionarioid = " + menu.idAlvo + ";";
+						}
+						stmt.execute(sqlDelete);
+						sqlDelete = "DELETE FROM new_schema.login WHERE loginid = " + menu.idAlvo + ";";
+						stmt.execute(sqlDelete);
+					}
+					
+					catch (Exception j)
+					{
+						JOptionPane.showMessageDialog(null, "Os dados do funcionário não puderam ser excluídos!");
+					}
+					
 					operacaoSucesso oS = new operacaoSucesso(display);
 					oS.setVisible(true);
 				}else {

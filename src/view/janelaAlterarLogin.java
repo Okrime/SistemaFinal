@@ -55,9 +55,9 @@ public class janelaAlterarLogin extends Shell {
 				boolean valid = false;
 				int tipoLogin = 1;	//* BD * puxar do banco de dados
 				int tipoPessoa = 2; //* BD * puxar do banco de dados
-				int id;
+				int id=0;
 				String user = text.getText();
-				id = menu.findIdByUser(user);	//validar se login existe
+				//id = menu.findIdByUser(user);	//validar se login existe
 				setVisible(false);
 				if (id != 0){	//se retornar 0 é porque nao achou login
 					//* BD * pegar tipo de login
