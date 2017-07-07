@@ -104,7 +104,7 @@ public class janelaClienteTransacao extends Shell {
 				if (valid){
 					valid = menu.checarConta(c);	//checar conta
 					if (valid)
-						valid = menu.checarValor(saldo, valor);	//validar saldo
+						valid = menu.checarValor(valor);	//validar saldo
 				}
 				setVisible(false);
 				if (valid){

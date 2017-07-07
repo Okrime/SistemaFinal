@@ -25,6 +25,7 @@ public class menu extends Shell {
 	public static int loggedType;		//declarar variavel global para usar nas outras classes
 											//indica tipo de login, 0 neutro 1 cliente 2 funcionario e 3 gerente
 	public static int idLogado;
+	public static int idAlvo;
 	public static float saldo;
 	/**
 	 * Launch the application.
@@ -281,10 +282,14 @@ public class menu extends Shell {
 		
     }
 	
-	public static boolean checarValor(float saldo, float valor){
+	public static boolean checarValor(float valor){
 		boolean valid = false;
-		if (saldo>=valor)
+	
+		System.out.println(valor);
+		System.out.println(saldo);
+		if (saldo>valor)
 			valid = true;
+		
 		return valid;
 	}
 	
@@ -304,7 +309,7 @@ public class menu extends Shell {
 		try{
 			Connection Conn = connect.getConnection();
 			Statement stmt = (Statement) Conn.createStatement();
-			String sqlBusca = "SELECT * FROM new_schema.cliente WHERE clienteid = " + menu.idLogado + ";";
+			String sqlBusca = "SELECT * FROM new_schema.cliente WHERE clienteid = " + idAlvo + ";";
 			//Test later
 			ResultSet rs = stmt.executeQuery(sqlBusca);
 			rs.next();
@@ -327,13 +332,12 @@ public class menu extends Shell {
 		try{
 			Connection Conn = connect.getConnection();
 			Statement stmt = (Statement) Conn.createStatement();
-			String sqlBusca = "SELECT * FROM new_schema.cliente WHERE clienteid = " + menu.idLogado + ";";
+			String sqlBusca = "SELECT * FROM new_schema.cliente WHERE clienteid = " + idAlvo + ";";
 			//Test later
 			ResultSet rs = stmt.executeQuery(sqlBusca);
 			rs.next();
-			
 			bdAgencia = rs.getInt(7);
-			
+			//System.out.println(bdAgencia);
 		}catch(Exception j){
 			System.out.println("Erro.");
 		}

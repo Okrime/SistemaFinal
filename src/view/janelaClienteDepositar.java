@@ -70,17 +70,6 @@ public class janelaClienteDepositar extends Shell {
 		text_2 = new Text(this, SWT.BORDER);
 		text_2.setBounds(93, 96, 140, 21);
 		
-		Label lblTipoDeConta = new Label(this, SWT.NONE);
-		lblTipoDeConta.setBounds(10, 141, 85, 15);
-		lblTipoDeConta.setText("Tipo de Conta");
-		
-		Button btnCorrente = new Button(this, SWT.RADIO);
-		btnCorrente.setBounds(109, 140, 67, 16);
-		btnCorrente.setText("Corrente");
-		
-		Button btnPoupanca = new Button(this, SWT.RADIO);
-		btnPoupanca.setBounds(189, 140, 74, 16);
-		btnPoupanca.setText("Poupanca");
 		
 		Button btnCancelar = new Button(this, SWT.NONE);
 		btnCancelar.addSelectionListener(new SelectionAdapter() {
@@ -103,7 +92,11 @@ public class janelaClienteDepositar extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean valid = false;
-				
+				int a, c;
+				String agencia = text_1.getText();
+				a = Integer.parseInt(agencia);
+				String conta = text.getText();
+				c = Integer.parseInt(conta);
 				try{
 					Connection Conn = connect.getConnection();
 					Statement stmt = (Statement) Conn.createStatement();
@@ -114,17 +107,18 @@ public class janelaClienteDepositar extends Shell {
 					
 					menu.saldo = rs.getFloat(5);
 					
+					String sqlBusca2 = "SELECT * FROM new_schema.cliente WHERE conta = " + c + ";";
+					ResultSet rs2 = stmt.executeQuery(sqlBusca2);
+					rs2.next();
+					
+					menu.idAlvo = rs2.getInt(1);
 					
 				}catch(Exception j){
 					System.out.println("Erro.");
 				}
 				
 				float valor;
-				int a, c;
-				String agencia = text_1.getText();
-				a = Integer.parseInt(agencia);
-				String conta = text.getText();
-				c = Integer.parseInt(conta);
+				
 				String aux;
 				aux = text_2.getText();
 				valor = Float.parseFloat(aux);
@@ -132,8 +126,9 @@ public class janelaClienteDepositar extends Shell {
 				valid = menu.checarAgencia(a);	//checar agencia
 				if (valid){
 					valid = menu.checarConta(c);	//checar conta
-					if (valid)
-						valid = menu.checarValor(menu.saldo, valor);	//validar saldo
+					if (valid){
+						valid = menu.checarValor(valor);	//validar saldo
+					}
 				}
 				setVisible(false);
 				if (valid){
@@ -149,10 +144,10 @@ public class janelaClienteDepositar extends Shell {
 						String sqlBusca = "SELECT * FROM new_schema.cliente WHERE conta = " + c + ";";
 						ResultSet rs = stmt.executeQuery(sqlBusca);
 						rs.next();
-						
+
 						saldo = rs.getFloat(5);
 						saldo = saldo + valor;
-						String sqlUpdate2 = "UPDATE new_schema.cliente SET saldo = '" + saldo + "' WHERE conta = " + c + ";";
+						String sqlUpdate2 = "UPDATE new_schema.cliente SET saldo = '" + saldo + "' WHERE clienteid = " + menu.idAlvo + ";";
 						stmt.executeUpdate(sqlUpdate2);
 						
 					}catch(Exception j){

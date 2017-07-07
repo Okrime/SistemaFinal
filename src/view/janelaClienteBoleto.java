@@ -125,7 +125,7 @@ public class janelaClienteBoleto extends Shell {
 				if (valid){
 					valid = checarData(dia, mes, ano);	//validar data
 					if (valid)
-						valid = menu.checarValor(menu.saldo, valor);	//validar saldo
+						valid = menu.checarValor(valor);	//validar saldo
 				}
 				setVisible(false);
 				/* confirmar senha

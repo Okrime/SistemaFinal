@@ -1,10 +1,17 @@
 package view;
+import java.sql.Connection;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Text;
+
+import com.mysql.jdbc.Statement;
+
+import conexao.connect;
+
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import view.menu;
@@ -45,7 +52,9 @@ public class janelaClienteSacar extends Shell {
 		
 		Label label_value = new Label(this, SWT.NONE);
 		label_value.setBounds(124, 10, 41, 15);
-		label_value.setText(String.valueOf(10));	//*BD*
+		String aux;
+		aux = String.valueOf(menu.saldo);
+		label_value.setText(aux);
 		
 		Label lblValorSaque = new Label(this, SWT.NONE);
 		lblValorSaque.setBounds(10, 38, 80, 15);
@@ -69,15 +78,23 @@ public class janelaClienteSacar extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean valid = false;
-				float saldo = 9.99f;	//* BD * puxar valor do saldo do banco
 				float valor;
 				String aux;
 				aux = text.getText();
 				valor = Float.parseFloat(aux);
-				valid = menu.checarValor(saldo, valor);	//validar saldo
+				valid = menu.checarValor(valor);	//validar saldo
 				setVisible(false);
 				if (valid){
-					//saldo = saldo - valor;	//* BD * atualizar valor do saldo do cliente
+					try{
+						Connection Conn = connect.getConnection();
+						Statement stmt = (Statement) Conn.createStatement();
+						menu.saldo = menu.saldo - valor;
+						String sqlUpdate = "UPDATE new_schema.cliente SET saldo = '" + menu.saldo + "' WHERE	clienteid = " + menu.idLogado + ";";
+						stmt.executeUpdate(sqlUpdate);
+					}catch(Exception j){
+						System.out.println("Erro.");
+					}
+					
 					operacaoSucesso oS = new operacaoSucesso(display);
 					oS.setVisible(true);
 				}else {
